@@ -41,4 +41,45 @@ def add(request):
     else:
         return render(request, 'mycontacts/add.html')
 
+def detalhes_contato(request):
+    """ 
+    This function is called to show the details of a contact member
+    """
+    if request.method == 'POST':
+        contact_id = request.POST.get('contact_id')
+        contact = Contact.objects.get(id=contact_id)
+        return render(request, 'mycontacts/detalhes_contato.html', {'contact': contact})
+    else:
+        return HttpResponseRedirect('/')
     
+def editar_contato(request):
+    """ 
+    This function is called to edit the details of a contact member
+    """
+    if request.method == 'POST':
+        contact_id = request.POST.get('contact_id')
+        contact = Contact.objects.get(id=contact_id)
+        
+        if 'save' in request.POST:
+            contact.name = request.POST.get('name', contact.name)
+            contact.relation = request.POST.get('relation', contact.relation)
+            contact.phone = request.POST.get('phone', contact.phone)
+            contact.email = request.POST.get('email', contact.email)
+            contact.save()
+            return HttpResponseRedirect('/')
+        
+        return render(request, 'mycontacts/editar_contato.html', {'contact': contact})
+    else:
+        return HttpResponseRedirect('/')
+    
+def deletar_contato(request):
+    """ 
+    This function is called to delete a contact member from the list
+    """
+    if request.method == 'POST':
+        contact_id = request.POST.get('contact_id')
+        contact = Contact.objects.get(id=contact_id)
+        contact.delete()
+        return HttpResponseRedirect('/')
+    else:
+        return HttpResponseRedirect('/')
