@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render , get_object_or_404
 from .forms import AddForm
 from .models import Contact
 from django.http import HttpResponseRedirect
+from django.views.generic.detail import DetailView
 
 def show(request):
     """ 
@@ -41,45 +42,53 @@ def add(request):
     else:
         return render(request, 'mycontacts/add.html')
 
-def detalhes_contato(request):
-    """ 
-    This function is called to show the details of a contact member
-    """
-    if request.method == 'POST':
-        contact_id = request.POST.get('contact_id')
-        contact = Contact.objects.get(id=contact_id)
-        return render(request, 'mycontacts/detalhes_contato.html', {'contact': contact})
-    else:
-        return HttpResponseRedirect('/')
+def ContactDetailView(request, detail_id):
+    """ This function is called to view one contact member to your contact list in your Database """
+    data = get_object_or_404(Contact, pk=detail_id)
+
+    context = {
+      "data":data
+    }
+    return render(request, "mycontacts/detalhes_contato.html", context)
     
-def editar_contato(request):
-    """ 
-    This function is called to edit the details of a contact member
-    """
+def ContactDetailEdit(request, detail_id):   
+    """ This function is called to edit one contact member to your contact list in your Database """
+    data = get_object_or_404(Contact, pk=detail_id)
+
+    context = {
+      "data":data
+    }
     if request.method == 'POST':
-        contact_id = request.POST.get('contact_id')
-        contact = Contact.objects.get(id=contact_id)
         
-        if 'save' in request.POST:
-            contact.name = request.POST.get('name', contact.name)
-            contact.relation = request.POST.get('relation', contact.relation)
-            contact.phone = request.POST.get('phone', contact.phone)
-            contact.email = request.POST.get('email', contact.email)
-            contact.save()
-            return HttpResponseRedirect('/')
+        django_form = AddForm(request.POST)
+        if django_form.is_valid():
+           
+            """ Assign data in Django Form to local variables """
+            edit_member_name = django_form.data.get("name")
+            edit_member_relation = django_form.data.get("relation")
+            edit_member_phone = django_form.data.get('phone')
+            edit_member_email = django_form.data.get('email')
+            
+            """ This is how your model connects to database and update a edit member """
+           
+            data.name =  edit_member_name
+            data.relation = edit_member_relation
+            data.phone = edit_member_phone
+            data.email = edit_member_email               
+            data.save()
+
+            contact_list = Contact.objects.all()
+            return HttpResponseRedirect("/")   
         
-        return render(request, 'mycontacts/editar_contato.html', {'contact': contact})
+        else:
+            """ redirect to the same page if django_form goes wrong """
+            return render(request, "mycontacts/editar_contato.html", context)
     else:
-        return HttpResponseRedirect('/')
+        return render(request, "mycontacts/editar_contato.html", context)
     
-def deletar_contato(request):
-    """ 
-    This function is called to delete a contact member from the list
-    """
-    if request.method == 'POST':
-        contact_id = request.POST.get('contact_id')
-        contact = Contact.objects.get(id=contact_id)
-        contact.delete()
-        return HttpResponseRedirect('/')
-    else:
-        return HttpResponseRedirect('/')
+def ContactDelete(request, detail_id):
+    """ This function is called to delete one contact member  """
+
+    contact = Contact.objects.get(pk=detail_id).delete()
+    
+    return HttpResponseRedirect("/")

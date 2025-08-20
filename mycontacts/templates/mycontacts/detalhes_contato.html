@@ -1,0 +1,39 @@
+{% extends 'mycontacts/background.html' %}
+{% load static %}
+{% block content %}
+
+  <div class="container-add">      
+    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 col-xs-offset-3">
+        		
+      <form id="add-contact-form" class="form" action="#" method="POST" role="form">
+            
+              {% csrf_token %}              
+              
+              <div class="form-group">
+                  <label class="form-label">Name</label>
+                  <input disabled="True" type="text" class="form-control" id="name" name="name" placeholder="Name" tabindex="1" value="{{data.name}}">
+              </div>
+              <div class="form-group">
+                  <label class="form-label">Relation</label>
+                  <input disabled="True" type="text" class="form-control" id="relation" name="relation" placeholder="Relation" tabindex="2" value="{{data.relation}}" >
+              </div>
+              <div class="form-group">
+                  <label class="form-label">Phone</label>
+                  <input disabled="True" type="text" class="form-control" id="phone" name="phone" placeholder="Phone" tabindex="3" value="{{data.phone}}">
+              </div>
+              <div class="form-group">
+                  <label class="form-label" for="email">Email</label>
+                  <input disabled="True" type="text" class="form-control" id="email" name="email" placeholder="Email" tabindex="4" value="{{data.email}}">
+              </div>                            
+              
+              <div class="text-center">
+                <a class ="btn" href="{% url 'home'%}">
+                  Back
+                </a>
+              </div>
+            </form>
+          
+      </div>
+  </div>
+
+{% endblock content %}
