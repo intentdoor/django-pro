@@ -14,7 +14,7 @@
             <div class="phone">{{ data.phone }}</div>
             <div class="email"><a href='{{ data.email }}'>{{ data.email }}</a> </div>
             <a href="{% url 'edit' data.id %}"> 
-                <img src="/mycontacts/static/img/editarimagem.png" height="60px">
+                <img src="{% static 'img/edit.png' %}" height="60px">
             </a>
             <a href="{% url 'delete' data.id %}"> 
                 <img src="/mycontacts/static/img/excluirimagem.png" height="60px">
